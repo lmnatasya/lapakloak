@@ -1,10 +1,8 @@
 <?php
 
 namespace App\Exceptions;
-use Illuminate\Auth\AuthenticationException;
-use Exception;
-use Illuminate\Support\Facades\Auth;
 
+use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -49,24 +47,5 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         return parent::render($request, $exception);
-    }
-
-    protected function unauthenticated($request, AuthenticationException $exception){
-
-                
-        if (Auth::guard('pembeli')->check()) {
-            return $request->expectsJson()
-            ? response()->json(['message' => $exception->getMessage()], 401)
-            : redirect()->guest(route('pembeli'));
-        }else if(Auth::guard('penjual')->check()){
-            return $request->expectsJson()
-            ? response()->json(['message' => $exception->getMessage()], 401)
-            : redirect()->guest(route('admin'));
-        }else{
-            return $request->expectsJson()
-            ? response()->json(['message' => $exception->getMessage()], 401)
-            : redirect()->guest(route('halamanLogin'));
-            }
-        return $next($request);
     }
 }

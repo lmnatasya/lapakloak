@@ -3,110 +3,112 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\katalog;
-use App\pertumbuhan_tanaman;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use App\User;
+use App\Penjualan;
 
 class PagesController extends Controller
 {
-    /**
-     * Show the profile for the given user.
-     *
-     * @param  int  $id
-     * @return Response
-     */
 
-    //guest
-    public function index()
-    {
-        // dump(Auth::guest());
-        // dump(Auth::guard('penjual'));
-        $katalog = DB::table('katalog')->get();
-        return view('index', ['katalog' => $katalog]);
-    }
-    public function login()
-    {
-        // dump(Auth::guest());
-        // dump(Auth::guard('penjual'));
-        return view('login');
-    }
-    public function katalog()
-    {
-        $katalog= katalog::where('id', $_GET['id'])->get();
-        return view('katalog', ['katalog' => $katalog]);
-    }
-    public function daftar()
-    {
-        // dump(Auth::guest());
-        return view('register');
-    }
+  public function index()
+  {
+      $katalog = katalog::paginate(20);
+      return view('index', ['katalog'=>$katalog]);
+  }
 
-    //pembeli
-    public function pembeli()
-    {
-        // dump(Auth::guest());
-        // dump(Auth::guard('penjual'));
-        // dump(Auth::guard('pembeli'));
-        $katalog = DB::table('katalog')->get();
-        return view('pembeli', ['katalog' => $katalog]);
-    }
-    public function katalogPembeli()
-    {
-        $katalog= katalog::where('id', $_GET['id'])->get();
-        return view('katalogPembeli', ['katalog' => $katalog]);
-    }
-    
+  public function login()
+  {
+      return view('login');
+  }
 
-    //penjual
-    public function penjual()
-    {
-        // dump(Auth::guest());
-        // dump(Auth::guard('penjual'));
-        $katalog_barang = DB::table('katalog')->get();
-        return view('penjual', ['katalog' => $katalog_barang]);
-    }
-    public function cekharga()
-    {
-        // dump(Auth::guest());
-        // dump(Auth::guard('penjual'));
-        $cekharga = DB::table('harga_jual')->get();
-        return view('penjual', ['harga_jual' => $cekharga]);
-    }
-    public function katalogPenjual()
-    {
-        // dump(Auth::guest());
-        $katalog_barang = DB::table('katalog')->get();
-        return view('katalogPenjual', ['katalog' => $katalog_barang]);
-    }
-    public function tambahkatalogPenjual()
-    {
-        // dump(Auth::guest());
-        $katalog_penjual = DB::table('katalog')->get();
-        return view('tambahkatalogPenjual', ['katalog' => $katalog_penjual]);
-    }
-    public function tambahKatalog(Request $kiriman)
-    {
-        $this->validate($kiriman,[
-            'namatanaman' => 'required|min:4',
-            'stok' => 'required',
-            'harga' => 'required|min:3'
-        ]);
-        katalog::create([
-            'nama_barang' => $kiriman->namabarang,
-            'stok' => $kiriman->stok,
-            'harga' => $kiriman->harga,
-            'gambar' => NULL,
-            'id_penjual' => 1
-        ]);
-        return redirect('/katalogPenjual');
-    }
-    public function tambahCekHarga()
-    {
-        // dump(Auth::guest());
-        // dump(Auth::guard('penjual'));
-        $cekharga = DB::table('harga_jual')->get();
-        return view('tambahCekHarga', ['harga_jual' => $cekharga]);
-    }
-    
+  public function register()
+  {
+      return view('register');
+  }
+
+  public function daftarKatalog(){
+    return view('daftarKatalog');
+  }
+
+  public function tambahKatalog(){
+    return view('tambahKatalog');
+  }
+
+  public function penjualan(){
+    $user = User::where('id_role', '2')->get();
+    return view('daftarPengepul', ['user'=>$user]);
+  }
+
+  public function detailKatalog(){
+      $katalog= katalog::where('id', $_GET['id'])->get();
+      return view('detailKatalog', ['katalog' => $katalog]);
+  }
+
+  public function keranjang(){
+    return view('detailPembelianPelanggan');
+  }
+
+  public function riwayatPembelian(){
+    return view('pembayaran');
+  }
+
+  public function konfirmasiPembelian(){
+    return view('konfirmasiPembelian');
+  }
+
+  public function daftarPembelian(){
+    return view('daftarPembelian');
+  }
+
+  public function formPenjualan(){
+    return view('penjualan');
+  }
+
+  public function dataPengguna(){
+    $user = User::all();
+    return view('dataPengguna', ['user'=>$user]);
+  }
+
+  /**
+  * Store a newly created resource in storage.
+  *
+  * @param  \Illuminate\Http\Request  $request
+  * @return \Illuminate\Http\Response
+  */
+  public function pengajuan(Request $request){
+
+    Penjualan::create([
+
+            'namaBarang' => $request['namaBarang'],
+            'alamat' => $request['alamat'],
+            'gambar' => $request['gambar'],
+    ]);
+    return view('riwayatPenjualan');
+  }
+
+  public function riwayatPenjualan(){
+    return view ('riwayatPenjualan');
+  }
+
+  public function rekapPembelian(){
+    $penjualan = Penjualan::all();
+    return view('daftarPenjualan', ['penjualan'=>$penjualan]);
+  }
+
+  public function detailPenjualan(){
+    return view ('detailPenjualan');
+  }
+
+  public function detailPembayaran(){
+    return view ('detailPembayaran');
+  }
+
+  public function pembelian(){
+    return view('pembelian');
+  }
+
+  public function detailPembelian(){
+    return view('detailPembelian');
+  }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\katalog;
 
 class HomeController extends Controller
 {
@@ -19,15 +20,11 @@ class HomeController extends Controller
     /**
      * Show the application dashboard.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function login()
-    {
-        return view('/index');
-    }
-
     public function index()
     {
-        return view('/');
+        $katalog = katalog::paginate(20);
+        return view('home', ['katalog'=>$katalog]);
     }
 }

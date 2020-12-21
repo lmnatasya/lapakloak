@@ -6,22 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class katalog extends Model
 {
-    protected $table='katalog';
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+	protected $table = 'katalogs';
     protected $fillable = [
-        'nama_barang', 'stok', 'harga', 'gambar','id_penjual'
+        'nama', 'gambar', 'harga', 'stok', 'deskripsi', 
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        
-    ];
+    public function user(){
+        return $this->belongsTo('App\User', 'id_user', 'id');
+    }
+
+    public function pembelian(){
+        return $this->belongsTo('App\Pembelian', 'id_katalog', 'id');
+    }
 }
